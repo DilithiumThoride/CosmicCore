@@ -2,14 +2,12 @@ package com.ghostipedia.cosmiccore.common.machine.multiblock.part;
 
 import com.ghostipedia.cosmiccore.api.capability.recipe.IHeatContainer;
 import com.ghostipedia.cosmiccore.api.machine.trait.NotifiableThermiaContainer;
-
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredIOPartMachine;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
-
 import com.lowdragmc.lowdraglib.gui.widget.ImageWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
@@ -17,23 +15,21 @@ import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
-
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHeatContainer {
 
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
-            ThermiaHatchPartMachine.class, TieredIOPartMachine.MANAGED_FIELD_HOLDER);
+    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(ThermiaHatchPartMachine.class, TieredIOPartMachine.MANAGED_FIELD_HOLDER);
 
     @Persisted
     @DescSynced
     private final NotifiableThermiaContainer thermiaContainer;
-
     public ThermiaHatchPartMachine(IMachineBlockEntity holder, int tier, IO io) {
         super(holder, tier, io);
-        long currentTemp = 0;
         this.thermiaContainer = createThermiaContainer();
     }
 
@@ -50,6 +46,7 @@ public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHea
         }
         return container;
     }
+
 
     @Override
     public Widget createUIWidget() {
@@ -86,32 +83,74 @@ public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHea
     }
 
     @Override
-    public long acceptHeatFromNetwork(Direction side) {
-        return 0;
+    public void saveCustomPersistedData(CompoundTag tag, boolean forDrop) {
+        tag.putDouble("Thermal", thermiaContainer.getCurrentEnergy());
+        super.saveCustomPersistedData(tag, forDrop);
+    }
+
+    @Override
+    public void loadCustomPersistedData(CompoundTag tag) {
+        thermiaContainer.setCurrentEnergy(tag.getDouble("Thermal"));
+        super.loadCustomPersistedData(tag);
+    }
+
+    @Override
+    public double acceptHeatFromNetwork(Direction side, double thermalEnergy) {
+        return thermiaContainer.acceptHeatFromNetwork(side, thermalEnergy);
     }
 
     @Override
     public boolean inputsHeat(Direction side) {
-        return false;
+        return thermiaContainer.inputsHeat(side);
     }
 
     @Override
     public boolean outputsHeat(Direction side) {
-        return IHeatContainer.super.outputsHeat(side);
+        return thermiaContainer.outputsHeat(side);
     }
 
     @Override
-    public long changeHeat(long heatDifference) {
-        return 0;
+    public double changeHeat(double thermalEnergy) {
+        return thermiaContainer.changeHeat(thermalEnergy);
     }
 
     @Override
-    public long getOverloadLimit() {
-        return 0;
+    public float getOverloadLimit() {
+        return thermiaContainer.getOverloadLimit();
     }
 
     @Override
-    public long getHeatStorage() {
-        return 0;
+    public double getCurrentEnergy() {
+        return thermiaContainer.getCurrentEnergy();
+    }
+
+    @Override
+    public void setCurrentEnergy(double energy) {
+        thermiaContainer.setCurrentEnergy(energy);
+    }
+
+    @Override
+    public float getHeatCapacity() {
+        return thermiaContainer.getHeatCapacity();
+    }
+
+    @Override
+    public double getCurrentTemperature() {
+        return thermiaContainer.getCurrentTemperature();
+    }
+
+    @Override
+    public double getBaseTemperature() {
+        return thermiaContainer.getBaseTemperature();
+    }
+
+    @Override
+    public float getConductance() {
+        return thermiaContainer.getConductance();
+    }
+
+    @Override
+    public boolean supportsImpossibleHeatValues() {
+        return thermiaContainer.supportsImpossibleHeatValues();
     }
 }

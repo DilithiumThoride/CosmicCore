@@ -4,6 +4,9 @@ import com.ghostipedia.cosmiccore.CosmicCore;
 import com.ghostipedia.cosmiccore.api.data.material.property.CCoreMaterialIconSet;
 import com.ghostipedia.cosmiccore.api.item.MeldingOmniTool;
 
+import com.ghostipedia.cosmiccore.api.material.CosmicPropertyKeys;
+import com.ghostipedia.cosmiccore.api.pipe.HeatPipeProperties;
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
@@ -637,5 +640,7 @@ public class CosmicMaterials {
         Neutronium.setProperty(PropertyKey.BLAST, new BlastProperty(15000));
         Chlorine.getProperty(PropertyKey.FLUID).getStorage().enqueueRegistration(FluidStorageKeys.PLASMA,
                 new FluidBuilder().state(FluidState.PLASMA));
+
+        HastelloyC276.setProperty(CosmicPropertyKeys.HEAT, new HeatPipeProperties(1500.f, 2.3f));
     }
 }

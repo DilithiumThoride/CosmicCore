@@ -11,6 +11,10 @@ public class CosmicLangHandler extends LangHandler {
         replace(provider, "item.gtceu.tool.luv_meld_tool", "%s Meld Multitool");
         provider.add("item.cosmiccore.portable_gravity_core.tooltip", "§aNormalizes Gravity to Match Earth.");
 
+        // thermia
+        replace(provider,"cosmiccore.recipe.temperature", "Temperature:");
+        replace(provider,"tooltip.cosmiccore.thermia_hatch_limit", "§cTemp. Limit: %sK");
+
         // machine tooltips/names/etc
         provider.add("gtceu.naquahine_reactor", "§bNaquahine Reactor");
 

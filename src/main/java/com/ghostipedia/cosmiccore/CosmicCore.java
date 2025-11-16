@@ -1,5 +1,6 @@
 package com.ghostipedia.cosmiccore;
 
+import com.ghostipedia.cosmiccore.api.capability.HeatCapabilityProvider;
 import com.ghostipedia.cosmiccore.api.capability.CosmicCapabilities;
 import com.ghostipedia.cosmiccore.api.item.LinkedTerminalBehavior;
 import com.ghostipedia.cosmiccore.api.pattern.CosmicPredicates;
@@ -17,6 +18,7 @@ import com.ghostipedia.cosmiccore.common.recipe.condition.CosmicConditions;
 import com.ghostipedia.cosmiccore.gtbridge.CosmicRecipeTypes;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialRegistryEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
@@ -32,7 +34,9 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.lowdragmc.lowdraglib.Platform;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -43,6 +47,7 @@ import appeng.api.features.GridLinkables;
 import earth.terrarium.adastra.api.events.AdAstraEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 @Mod(CosmicCore.MOD_ID)
 public class CosmicCore {
@@ -133,6 +138,7 @@ public class CosmicCore {
     public void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
         MultiblockInit.init();
         CosmicMachines.init();
+
     }
 
     public void registerSounds(GTCEuAPI.RegisterEvent<ResourceLocation, SoundEntry> event) {
@@ -142,5 +148,12 @@ public class CosmicCore {
     @SubscribeEvent
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         CosmicCapabilities.register(event);
+    }
+
+    @SubscribeEvent
+    public void attachCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
+        if(event.getObject() instanceof MetaMachineBlockEntity mmbe) {
+            event.addCapability(CosmicCore.id("heat_capability"), new HeatCapabilityProvider(mmbe));
+        }
     }
 }

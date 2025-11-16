@@ -5,8 +5,13 @@ import com.ghostipedia.cosmiccore.ember.blockentity.CosmicEmberReceptorBlockEnti
 
 import com.gregtechceu.gtceu.api.GTValues;
 
+import com.ghostipedia.cosmiccore.api.registries.CosmicRegistration;
+import com.ghostipedia.cosmiccore.client.renderer.block.NebulaeCoilRenderer;
+import com.ghostipedia.cosmiccore.common.blockentity.CosmicCoilBlockEntity;
+import com.ghostipedia.cosmiccore.common.blockentity.pipelike.HeatPipeBlockEntity;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.tterrag.registrate.util.entry.BlockEntry;
 
 import java.util.Locale;
 import java.util.Map;
@@ -17,6 +22,16 @@ import static com.ghostipedia.cosmiccore.common.data.CosmicBlocks.EMBER_RECEPTOR
 
 public class CosmicBlockEntities {
 
+    public static final BlockEntityEntry<CosmicCoilBlockEntity> CAUSAL_FABRIC_COIL_BLOCK_ENTITY = REGISTRATE
+            .blockEntity("causal_fabric_coil", CosmicCoilBlockEntity::new)
+            .renderer(() -> NebulaeCoilRenderer.createBlockEntityRenderer())
+            .validBlocks(CosmicBlocks.COIL_CAUSAL_FABRIC)
+            .register();
+
+    public static final BlockEntityEntry<HeatPipeBlockEntity> HEAT_PIPE = CosmicRegistration.REGISTRATE
+            .blockEntity("heat_pipe", HeatPipeBlockEntity::new)
+            .validBlocks(CosmicMaterialBlocks.HEAT_PIPE_BLOCKS.values().toArray(BlockEntry[]::new))
+            .register();
     public static final Map<Integer, BlockEntityEntry<CosmicEmberEmitterBlockEntity>> COSMIC_EMBER_EMITTER_BE = registerEmberEmitters();
     public static final Map<Integer, BlockEntityEntry<CosmicEmberReceptorBlockEntity>> COSMIC_EMBER_RECEIVER_BE = registerEmberReceptors();
 
