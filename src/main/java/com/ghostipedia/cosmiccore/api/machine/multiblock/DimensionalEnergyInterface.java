@@ -356,12 +356,12 @@ public class DimensionalEnergyInterface extends WorkableMultiblockMachine
 
                     var storedComponent = Component
                             .literal(CosmicFormattingUtil.formatNumberWithCharacterLimit(energyStored, 12));
-                    textList.add(formatWithConstantWidth("gtceu.multiblock.power_substation.current",
+                    textList.add(formatWithConstantWidth("gtceu.multiblock.power_substation.stored",
                             storedComponent.setStyle(STYLE_GOLD), uiWidth - 4));
 
                     var capacityComponent = Component
                             .literal(CosmicFormattingUtil.formatNumberWithCharacterLimit(energyCapacity, 12));
-                    textList.add(formatWithConstantWidth("gtceu.multiblock.power_substation.maximum",
+                    textList.add(formatWithConstantWidth("gtceu.multiblock.power_substation.capacity",
                             capacityComponent.setStyle(STYLE_GOLD), uiWidth - 4));
 
                     var bufferedComponent = Component

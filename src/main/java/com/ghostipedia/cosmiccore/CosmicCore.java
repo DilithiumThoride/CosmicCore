@@ -1,7 +1,7 @@
 package com.ghostipedia.cosmiccore;
 
-import com.ghostipedia.cosmiccore.api.capability.HeatCapabilityProvider;
 import com.ghostipedia.cosmiccore.api.capability.CosmicCapabilities;
+import com.ghostipedia.cosmiccore.api.capability.HeatCapabilityProvider;
 import com.ghostipedia.cosmiccore.api.item.LinkedTerminalBehavior;
 import com.ghostipedia.cosmiccore.api.pattern.CosmicPredicates;
 import com.ghostipedia.cosmiccore.api.recipe.lookup.MapEmberIngredient;
@@ -47,7 +47,6 @@ import appeng.api.features.GridLinkables;
 import earth.terrarium.adastra.api.events.AdAstraEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 @Mod(CosmicCore.MOD_ID)
 public class CosmicCore {

@@ -116,7 +116,7 @@ public class CosmicLangHandler extends LangHandler {
         provider.add("tooltip.cosmiccore.soul_hatch.input", "§cMax Recipe Input§f:§6 %s");
         provider.add("tooltip.cosmiccore.soul_hatch.output", "§cMax Soul Network Capacity§f:§6 %s");
         provider.add("tooltip.cosmiccore.ember_hatch.consumption", "§cMax Ember Consumption§f:§6 %s");
-        provider.add("tooltip.cosmiccore.ember_hatch.maximum", "§cMax Ember maximum§f:§6 %s");
+        provider.add("tooltip.cosmiccore.ember_hatch.capacity", "§cMax Ember capacity§f:§6 %s");
         provider.add("tooltip.cosmiccore.thermia_hatch_limit", "§cTemp. Limit: %sK");
         provider.add("cosmiccore.multiblock.magnetic_field_strength", "§fMax Field Strength§f:§6 %s");
         provider.add("cosmiccore.multiblock.magnetic_regen", "§aField Recovery Rate§f:§6 %sT/t");
@@ -273,7 +273,7 @@ public class CosmicLangHandler extends LangHandler {
         provider.add("gtceu.hellfire_foundry", "§cHellfire Foundry");
 
         // embers lang
-        provider.add("cosmiccore.ember.maximum", "§cEmber Capacity:§6 %s");
+        provider.add("cosmiccore.ember.capacity", "§cEmber Capacity:§6 %s");
         provider.add("cosmiccore.ember.transfer", "§cEmber Transfer Rate:§6 %s");
 
         multiLang(provider, "item.cosmiccore.the_one_ring.tooltip",
@@ -341,8 +341,8 @@ public class CosmicLangHandler extends LangHandler {
         provider.add("cosmic.command.wireless.energy.player", "§aPlayer:§a %s");
         provider.add("cosmic.command.wireless.energy.team", "§aTeam:§a %s");
         provider.add("cosmic.command.wireless.energy.header", "§eWireless Energy Network Info (§e %s §e)§e:");
-        provider.add("cosmic.command.wireless.energy.maximum", "  §bCapacity:§b %s EU");
-        provider.add("cosmic.command.wireless.energy.current", "  §bStored:§b %s EU");
+        provider.add("cosmic.command.wireless.energy.capacity", "  §bCapacity:§b %s EU");
+        provider.add("cosmic.command.wireless.energy.stored", "  §bStored:§b %s EU");
         provider.add("cosmic.command.wireless.energy.input", "  §bInput:§b %s EU/t");
         provider.add("cosmic.command.wireless.energy.output", "  §bOutput:§b %s EU/t");
         provider.add("cosmic.command.wireless.energy.buffered", "  §bBuffered:§b %s EU");
@@ -355,8 +355,8 @@ public class CosmicLangHandler extends LangHandler {
         provider.add("cosmic.gui.wireless.energy.player", "§aPlayer:§a %s");
         provider.add("cosmic.gui.wireless.energy.team", "§aTeam:§a %s");
         provider.add("cosmic.gui.wireless.energy.header", "§eWireless Energy Network Info (§e %s §e)§e:");
-        provider.add("cosmic.gui.wireless.energy.maximum", "  §bCapacity:§b %s EU");
-        provider.add("cosmic.gui.wireless.energy.current", "§eStorage §b%s §f%s/%s");
+        provider.add("cosmic.gui.wireless.energy.capacity", "  §bCapacity:§b %s EU");
+        provider.add("cosmic.gui.wireless.energy.stored", "§eStorage §b%s §f%s/%s");
         provider.add("cosmic.gui.wireless.energy.net", "  §aEU NET: %s EU/t");
         provider.add("cosmic.gui.wireless.energy.input", "§aIN:§b %s EU/t");
         provider.add("cosmic.gui.wireless.energy.output", "§cOUTt:§b %s EU/t");

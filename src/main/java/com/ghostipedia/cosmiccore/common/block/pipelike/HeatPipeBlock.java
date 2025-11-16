@@ -1,6 +1,5 @@
 package com.ghostipedia.cosmiccore.common.block.pipelike;
 
-import com.ghostipedia.cosmiccore.api.capability.recipe.IHeatContainer;
 import com.ghostipedia.cosmiccore.api.material.CosmicPropertyKeys;
 import com.ghostipedia.cosmiccore.api.pipe.HeatPipeProperties;
 import com.ghostipedia.cosmiccore.common.blockentity.pipelike.HeatPipeBlockEntity;
@@ -8,7 +7,6 @@ import com.ghostipedia.cosmiccore.common.data.CosmicBlockEntities;
 import com.ghostipedia.cosmiccore.common.pipelike.heat.HeatPipeType;
 import com.ghostipedia.cosmiccore.common.pipelike.heat.LevelHeatPipeNet;
 import com.gregtechceu.gtceu.api.block.MaterialPipeBlock;
-import com.gregtechceu.gtceu.api.block.PipeBlock;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.pipenet.IPipeNode;
@@ -27,13 +25,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

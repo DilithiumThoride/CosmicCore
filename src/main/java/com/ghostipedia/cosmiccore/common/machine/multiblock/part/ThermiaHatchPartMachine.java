@@ -19,7 +19,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHeatContainer {
 
@@ -28,6 +27,7 @@ public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHea
     @Persisted
     @DescSynced
     private final NotifiableThermiaContainer thermiaContainer;
+
     public ThermiaHatchPartMachine(IMachineBlockEntity holder, int tier, IO io) {
         super(holder, tier, io);
         this.thermiaContainer = createThermiaContainer();
@@ -46,7 +46,6 @@ public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHea
         }
         return container;
     }
-
 
     @Override
     public Widget createUIWidget() {

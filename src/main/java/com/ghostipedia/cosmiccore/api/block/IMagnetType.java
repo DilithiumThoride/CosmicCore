@@ -20,7 +20,7 @@ public interface IMagnetType {
 
     /**
      *
-     * @return Maximum maximum of the magnet
+     * @return Maximum capacity of the magnet
      */
     int getMagnetFieldCapacity();
 

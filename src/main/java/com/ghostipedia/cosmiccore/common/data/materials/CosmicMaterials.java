@@ -6,7 +6,6 @@ import com.ghostipedia.cosmiccore.api.item.MeldingOmniTool;
 
 import com.ghostipedia.cosmiccore.api.material.CosmicPropertyKeys;
 import com.ghostipedia.cosmiccore.api.pipe.HeatPipeProperties;
-import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;

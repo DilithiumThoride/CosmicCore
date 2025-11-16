@@ -1,35 +1,19 @@
 package com.ghostipedia.cosmiccore.common.data;
 
-import com.ghostipedia.cosmiccore.CosmicCore;
-import com.ghostipedia.cosmiccore.api.material.CosmicPropertyKeys;
 import com.ghostipedia.cosmiccore.common.block.pipelike.HeatPipeBlock;
-import com.ghostipedia.cosmiccore.common.pipelike.heat.HeatPipeType;
+import com.ghostipedia.cosmiccore.common.blockentity.pipelike.HeatPipeBlockEntity;
 import com.ghostipedia.cosmiccore.ember.blockentity.CosmicEmberEmitterBlockEntity;
 import com.ghostipedia.cosmiccore.ember.blockentity.CosmicEmberReceptorBlockEntity;
 
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
-import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.GTValues;
 
-import com.ghostipedia.cosmiccore.api.registries.CosmicRegistration;
-import com.ghostipedia.cosmiccore.client.renderer.block.NebulaeCoilRenderer;
-import com.ghostipedia.cosmiccore.common.blockentity.CosmicCoilBlockEntity;
-import com.ghostipedia.cosmiccore.common.blockentity.pipelike.HeatPipeBlockEntity;
-import com.gregtechceu.gtceu.api.block.MaterialPipeBlock;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
-import com.gregtechceu.gtceu.api.data.chemical.material.registry.MaterialRegistry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
-import com.gregtechceu.gtceu.api.item.MaterialPipeBlockItem;
-import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
-import com.gregtechceu.gtceu.common.data.GTBlocks;
-import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
-import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import com.tterrag.registrate.util.entry.BlockEntry;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.world.level.block.Blocks;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.Locale;
 import java.util.Map;
