@@ -82,9 +82,10 @@ public class CreativeThermiaContainerMachine extends MetaMachine implements IHea
         lastAverageHeatIOPerTick = heat;
     }
 
+    //accepts ALL incoming thermal energy, all the time, always, forever
     @Override
-    public double acceptHeatFromNetwork(Direction side, double thermalEnergy) {
-        return 0;
+    public long acceptHeatFromNetwork(Direction side, long thermalEnergy) {
+        return thermalEnergy;
     }
 
     @Override
@@ -98,30 +99,43 @@ public class CreativeThermiaContainerMachine extends MetaMachine implements IHea
     }
 
     @Override
-    public double changeHeat(double thermalEnergy) {
+    public long changeHeat(long thermalEnergy) {
         if(source || !active) {
             return 0;
         }
+        return thermalEnergy; //accept all energy changes
+    }
+
+    @Override
+    public long getOverloadThreshold() {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
+    public long getUnderloadThreshold() {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
+    public long getCurrentThermalEnergy() {
         return 0;
     }
 
     @Override
-    public float getOverloadLimit() {
-        return Float.MAX_VALUE;
+    public void setCurrentThermalEnergy(long energy) {}
+
+    @Override
+    public long getMaximumThermalEnergy() {
+        return Long.MAX_VALUE;
     }
 
     @Override
-    public double getCurrentEnergy() {
-        return 0;
+    public long getMinimumThermalEnergy() {
+        return Long.MIN_VALUE;
     }
 
     @Override
-    public void setCurrentEnergy(double energy) {}
-
-    @Override
-    public float getHeatCapacity() {
-        return 1;
-    }
+    public boolean supportsImpossibleHeatValues() { return true; }
 
     @Override
     public ModularUI createUI(Player entityPlayer) {
@@ -157,7 +171,22 @@ public class CreativeThermiaContainerMachine extends MetaMachine implements IHea
     }
 
     @Override
-    public float getConductance() {
+    public float getConductanceRate() {
         return 1f;
+    }
+
+    @Override
+    public float getConductanceRateEnvironment() {
+        return 1f;
+    }
+
+    @Override
+    public long getBaseTemperature() {
+        return 273;
+    }
+
+    @Override
+    public long getLastThermalChange() {
+        return 0;
     }
 }

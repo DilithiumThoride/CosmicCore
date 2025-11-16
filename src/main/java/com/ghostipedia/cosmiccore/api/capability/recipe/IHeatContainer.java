@@ -4,120 +4,257 @@ import com.ghostipedia.cosmiccore.api.capability.IHeatInfoProvider;
 
 import net.minecraft.core.Direction;
 
+/**
+ * The thermalEnergy is measured in Millikelvin (mK), so 0°c = 273,150 mK
+ * //TODO: Determine if this is the measurement to be used. Another consideration is Microkelvin
+ */
 public interface IHeatContainer extends IHeatInfoProvider {
-
-    /*
-     * Basically just changeHeat(long) but should also handle overloads and capacity.
-     * This is what I probably want to use between blocks...
-     * fuck if I know
+    /**
+     * @return The current amount of Thermal Energy
      */
-    long acceptHeatFromNetwork(Direction side);
+    long getCurrentThermalEnergy();
 
-    // Returns: if this container can accept heat from this side.
+    /**
+     * @return The minimum amount of Thermal Energy the HeatContainer can have before it is clamped (unless it can Underload)
+     */
+    long getMinimumThermalEnergy();
+
+    /**
+     * @return The maximum amount of Thermal Energy the HeatContainer can have before it is clamped (unless it can Overload)
+     */
+    long getMaximumThermalEnergy();
+
+    /**
+     * Check {@link #getHeatCanBeUnderloaded()} for whether this HeatContainer can underload
+     * @return The threshold at which an Underload will occur
+     */
+    long getUnderloadThreshold();
+
+    /**
+     * Check {@link #getHeatCanBeOverloaded()} for whether this HeatContainer can overload
+     * @return The threshold at which an Overload will occur
+     */
+    long getOverloadThreshold();
+
+    void setCurrentThermalEnergy(long thermalEnergy);
+//    void setMinimumThermalEnergy(long thermalEnergy);
+//    void setMaximumThermalEnergy(long thermalEnergy);
+//    void setUnderloadThermalEnergy(long thermalEnergy);
+//    void setOverloadThermalEnergy(long thermalEnergy);
+
+    float getConductanceRate();
+    float getConductanceRateEnvironment();
+
+//    long setConductanceRate();
+//    long setConductanceRateEnvironment();
+
+    long getBaseTemperature();
+
+    long getLastThermalChange();
+
+    /**
+     * Called when the HeatContainer {@link #getHeatCanBeOverloaded()} and {@link #getCurrentThermalEnergy()}
+     * is greater than {@link #getOverloadThreshold()}
+     */
+    default void overload() {};
+
+    /**
+     * Called when the HeatContainer {@link #getHeatCanBeUnderloaded()} and {@link #getCurrentThermalEnergy()}
+     * is less than {@link #getUnderloadThreshold()}
+     */
+    default void underload() {};
+
+    /**
+     * Whether this HeatContainer can Overload
+     * @return True when OverloadThermalEnergy is greater than MaximumThermalEnergy
+     */
+    default boolean getHeatCanBeOverloaded() {
+        return getOverloadThreshold() > getMaximumThermalEnergy();
+    }
+
+    /**
+     * Whether this HeatContainer can Underload
+     * @return True when UnderloadThermalEnergy is less than MinimumThermalEnergy
+     */
+    default boolean getHeatCanBeUnderloaded() {
+        return getUnderloadThreshold() < getMinimumThermalEnergy();
+    }
+
+    /**
+     * @param side The direction we want to check if heat can input from
+     * @return if this container can accept heat from this side
+     */
     boolean inputsHeat(Direction side);
 
-    // Returns: if this container can eject heat from this side.
+    /**
+     * @param side The direction we want to check if heat can output to
+     * @return if this container can eject heat from this side
+     */
     default boolean outputsHeat(Direction side) {
         return false;
     };
 
-    /*
-     * The Magic Sauce.
-     * for handling logic within machine running behaviors, DO NOT. Use this for the eventual pipenet
-     * update this desc to properly reflect interface methods once they are adapted.
+    /**
+     * Adds thermalEnergy to the HeatContainer if the Side {@link #inputsHeat(Direction)}
+     * @param side The Direction to input from
+     * @param thermalEnergy The amount of thermalEnergy
+     * @return The amount of thermalEnergy accepted
      */
-    long changeHeat(long heatDifference);
-
-    /*
-     * Adds a set amount of heat to this heat container
-     * Params : heatToAdd - amount of heat to add.
-     * Returns : amount of heat added.
-     */
-    default long addHeat(long heatToAdd) {
-        return changeHeat(heatToAdd);
-    }
-
-    /*
-     * Removes a set amount of heat to this heat container
-     * Params : heatToRemove - amount of heat to remove.
-     * Returns : amount of heat removed.
-     */
-    default long removeHeat(long heatToRemove) {
-        return -changeHeat(-heatToRemove);
-    }
-
-    // Heat Containers Do not have an insertion limit. Thus we melt the block if they overload.
-    // TODO : The Math that actually makes this behave less psychotic. And actually function.
-    default boolean getHeatCanBeOverloaded() {
-        if (getOverloadLimit() > getHeatStorage()) {
-            return getHeatInfo().overload();
+    default long acceptHeatFromNetwork(Direction side, long thermalEnergy) {
+        if (inputsHeat(side)) {
+            return changeHeat(thermalEnergy);
         }
-        return false;
+        return 0;
     }
 
-    // Reports the Current Thermal Maximum a container can withstand
-    long getOverloadLimit();
+    /**
+     * Changes the currentThermalEnergy by the provided thermalEnergy <br><br>
+     * The new currentThermalEnergy will be clamped by minimumThermalEnergy or maximumThermalEnergy,
+         * UNLESS this HeatContainer can underload / overload <br><br>
+     * If the HeatContainer CAN Underload {@link #getHeatCanBeUnderloaded()} or Overload {@link #getHeatCanBeOverloaded()}, then it will do so here
+     * @param thermalEnergy The delta thermalEnergy
+     * @return The amount of thermalEnergy accepted
+     */
+    default long changeHeat(long thermalEnergy) {
+        long currentEnergy = getCurrentThermalEnergy();
+        long delta = currentEnergy;
+        currentEnergy += thermalEnergy;
+        long fit = getHeatChangeToFitWithinTempLimits();
 
-    // Reports the Current Temperature.
-    long getHeatStorage();
+        //always set the new thermal energy, even if it's under / over the min / max, before performing our underload / overload
+        //in case the overload / underload do not destroy the HeatContainer and instead need to e.g. warm up or cool down
+        currentEnergy -= fit;
+        setCurrentThermalEnergy(currentEnergy);
+
+        delta = delta - currentEnergy;
+
+        if (fit == 0 && getHeatCanBeUnderloaded() && currentEnergy < getUnderloadThreshold()) {
+            //we ka-freeze (*actual implementations may vary)
+            underload();
+        }
+        else if (fit == 0 && getHeatCanBeOverloaded() && currentEnergy > getOverloadThreshold()) {
+            //we ka-melt (*actual implementations may vary)
+            overload();
+        }
+
+        return delta;
+    }
+
+    /**
+     * @return Value to subtract from the currentThermalEnergy in order to reach the minimumThermalEnergy
+     * or maximumThermalEnergy unless the HeatContainer can be Underloaded {@link #getHeatCanBeUnderloaded()}
+     * or Overloaded {@link #getHeatCanBeOverloaded()}
+     */
+    default long getHeatChangeToFitWithinTempLimits() {
+        //if heat is less than the minimum
+        if (getCurrentThermalEnergy() < getMinimumThermalEnergy()) {
+            //and it can be underloaded
+            if (getHeatCanBeUnderloaded()) {
+                if (getCurrentThermalEnergy() < 0 && !supportsImpossibleHeatValues()) {
+                    //return an amount to zero it out (absolute zero) if we don't support it
+                    return -getCurrentThermalEnergy();
+                }
+                else {
+                    //otherwise don't clamp (we're below absolute zero meow)
+                    return 0;
+                }
+            }
+            else
+                //otherwise return the value that will clamp to the minimum
+                return -(getMinimumThermalEnergy() - getCurrentThermalEnergy());
+        }
+        //else if heat is over the maximum
+        else if (getCurrentThermalEnergy() > getMaximumThermalEnergy()) {
+            //and we can overload
+            if (getHeatCanBeOverloaded())
+                //don't clamp
+                return 0;
+            else
+                //otherwise return the value that will clamp to the maximum
+                return getMaximumThermalEnergy() - getCurrentThermalEnergy();
+        }
+        //otherwise don't clamp since we're not above the max or below the min
+        else {
+            return 0;
+        }
+    }
 
     @Override
     default HeatInfo getHeatInfo() {
-        return new HeatInfo(getHeatStorage(), getHeatStorage(), getHeatCanBeOverloaded());
+        return new HeatInfo(
+                getCurrentThermalEnergy(),
+                getMinimumThermalEnergy(),
+                getMaximumThermalEnergy(),
+                getUnderloadThreshold(),
+                getOverloadThreshold(),
+                getHeatCanBeOverloaded(),
+                getHeatCanBeUnderloaded()
+        );
     };
 
-    // Params needs to build the container.
-    // This Abomination - Allows Going below Absolute Zero
+    /**
+     * @return Whether this HeatContainer is capable of going below Absolute Zero
+     */
     @Override
     default boolean supportsImpossibleHeatValues() {
         return false;
     };
 
-    // Max amount of heat that can be output per tick
+    /**
+     * @return Max amount of heat that can be output per tick
+     */
     default long getEjectLimit() {
         return 0L;
     };
 
-    // Max amount of heat that can be accepted per tick
+    /**
+     * @return Max amount of heat that can be accepted per tick
+     */
     default long getAcceptLimit() {
         return 0L;
     }
 
-    // Input per second
+    /**
+     * @return Input per second
+     */
     default long getHeatInputPerSec() {
         return 0L;
     }
 
-    // Output per second
+    /**
+     * @return Output per second
+     */
     default long getHeatOutputPerSec() {
         return 0L;
     }
 
-    IHeatContainer DEFAULT = new IHeatContainer() {
+    // I'm not sure what the purpose of this was supposed to be
 
-        @Override
-        public long acceptHeatFromNetwork(Direction side) {
-            return 0;
-        }
-
-        @Override
-        public boolean inputsHeat(Direction side) {
-            return false;
-        }
-
-        @Override
-        public long changeHeat(long heatDifference) {
-            return 0;
-        }
-
-        @Override
-        public long getOverloadLimit() {
-            return 0;
-        }
-
-        @Override
-        public long getHeatStorage() {
-            return 0;
-        }
-    };
+//    IHeatContainer DEFAULT = new IHeatContainer() {
+//
+//        @Override
+//        public long acceptHeatFromNetwork(Direction side) {
+//            return 0;
+//        }
+//
+//        @Override
+//        public boolean inputsHeat(Direction side) {
+//            return false;
+//        }
+//
+//        @Override
+//        public long changeHeat(long heatDifference) {
+//            return 0;
+//        }
+//
+//        @Override
+//        public long getOverloadLimit() {
+//            return 0;
+//        }
+//
+//        @Override
+//        public long getHeatStorage() {
+//            return 0;
+//        }
+//    };
 }

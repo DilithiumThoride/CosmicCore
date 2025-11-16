@@ -31,7 +31,7 @@ import java.util.*;
 
 public class AlchemicalFissionReactor extends WorkableElectricMultiblockMachine {
 
-    // Base Heat capacity (maybe we make it so there's ways to raise this so there's more 'buffer' in each zone. tbd
+    // Base Heat maximum (maybe we make it so there's ways to raise this so there's more 'buffer' in each zone. tbd
     // that sounds like block predicates lol)
     @Getter
     public static long HEAT_CAPACITY = 10_000L;

@@ -37,7 +37,7 @@ public class DimensionalEnergyCapacitor extends DimensionalEnergyInterface {
     public static final int MIN_CASINGS = 14;
 
     // Passive Drain Constants
-    // 1% capacity per 24 hours
+    // 1% maximum per 24 hours
     public static final long PASSIVE_DRAIN_DIVISOR = 20 * 60 * 60 * 24 * 100;
     // no more than 100kEU/t per storage block
     public static final long PASSIVE_DRAIN_MAX_PER_STORAGE = 100_000L;

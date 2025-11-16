@@ -210,7 +210,7 @@ public class WirelessEnergySavedData extends SavedData {
     /**
      * Add EU to the users global energy. You can enter a negative number to subtract it.
      * If the value goes below 0, it will return the EU amount and no operation will be performed.
-     * If the value goes above the {@link WirelessEnergyData} capacity, it will return the energy that was not added to
+     * If the value goes above the {@link WirelessEnergyData} maximum, it will return the energy that was not added to
      * the network.
      * If the operation is successful, return value will be 0.
      * BigIntegers have a much slower operation than long/int. You should call these methods as infrequently as possible

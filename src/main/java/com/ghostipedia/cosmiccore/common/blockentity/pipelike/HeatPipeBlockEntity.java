@@ -20,7 +20,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -117,18 +116,20 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
         }
         return heatContainer;
     }
+
     //todo; make map of temps and dims
-    public double getEnvironmentalTemperature() {
-        return 300;
+    public long getEnvironmentalTemperature() {
+        return (23 + 273) * 1000; //Celsius to millikelvin (THIS IS FOR REFERENCE, PERFORM ACTUAL MAPS)
     }
 
+    //todo; make map of temps and dims
     public float getEnvironmentalConductivity() {
         return 0.5f;
     }
 
-    public double loseEnergy(double thermalEnergy, double environmentalFactor, int ticksPassed) {
+    public long loseEnergy(long thermalEnergy, float environmentalFactor, int ticksPassed) {
         for (int i = 0; i < ticksPassed; i++) {
-            thermalEnergy -= Math.pow(Math.abs(thermalEnergy), 0.3) * environmentalFactor * Math.signum(thermalEnergy);
+            thermalEnergy -= (long)(Math.pow(Math.abs(thermalEnergy), 0.3) * environmentalFactor * Math.signum(thermalEnergy));
         }
         return thermalEnergy;
     }
@@ -156,16 +157,16 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
                 }
                 IHeatContainer neighbor = neighbors.get(direction);
                 if (neighbor == null) continue;
-                double selfTemp = getHeatContainer().getCurrentTemperature();
-                double neighborTemp = neighbor.getCurrentTemperature();
+                long selfTemp = getHeatContainer().getCurrentThermalEnergy();
+                long neighborTemp = neighbor.getCurrentThermalEnergy();
                 if (neighborTemp >= selfTemp) continue;
-                double transfer = (selfTemp - neighborTemp) * harmonicMean(neighbor.getConductance(), getHeatContainer().getConductance());
+                long transfer = (long)((selfTemp - neighborTemp) * harmonicMean(neighbor.getConductanceRate(), getHeatContainer().getConductanceRate()));
                 transfer = neighbor.acceptHeatFromNetwork(direction, transfer);
-                getHeatContainer().removeHeat(transfer);
+                getHeatContainer().changeHeat(-transfer);
             }
         }
-        double current = getHeatContainer().getCurrentTemperature();
-        double max = getHeatContainer().getOverloadLimit();
+        double current = getHeatContainer().getCurrentThermalEnergy();
+        double max = getHeatContainer().getOverloadThreshold();
         if (current > max) {
             onOverload(current, max);
         }
@@ -183,25 +184,29 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
 
     @Override
     public void saveCustomPersistedData(CompoundTag tag, boolean forDrop) {
-        tag.putDouble("Thermal", getHeatContainer().getCurrentEnergy());
+        tag.putLong("Thermal", getHeatContainer().getCurrentThermalEnergy());
         super.saveCustomPersistedData(tag, forDrop);
     }
 
     @Override
     public void loadCustomPersistedData(CompoundTag tag) {
-        getHeatContainer().setCurrentEnergy(tag.getDouble("Thermal"));
+        getHeatContainer().setCurrentThermalEnergy(tag.getLong("Thermal"));
         super.loadCustomPersistedData(tag);
     }
 
+    /*
+    Having pipes minable with pickaxe-type tools by default seems dangerous
+    TODO: Discuss the proper tool?
     @Override
     public GTToolType getPipeTuneTool() {
         return GTToolType.MINING_HAMMER;
     }
+     */
 
     @NotNull
     @Override
     public List<Component> getDataInfo(PortableScannerBehavior.DisplayMode mode) {
-        //runningTemp += 1000;
-        return List.of(Component.literal("Current Temp: " + FormattingUtil.formatNumber2Places(getHeatContainer().getCurrentTemperature())));
+        //display temperature as Kelvin (millikelvin to kelvin = /1000)
+        return List.of(Component.literal("Current Temp: " + FormattingUtil.formatNumber2Places(getHeatContainer().getCurrentThermalEnergy() / 1000d)));
     }
 }

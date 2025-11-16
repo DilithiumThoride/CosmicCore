@@ -1,25 +1,16 @@
 package com.ghostipedia.cosmiccore.api.capability;
 
 import com.ghostipedia.cosmiccore.api.capability.recipe.IHeatContainer;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
 import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.multiblock.IMultiController;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.TimeUnit;
 
 import static com.ghostipedia.cosmiccore.api.capability.CosmicCapabilities.CAPABILITY_HEAT_CONTAINER;
 
@@ -52,39 +43,84 @@ public class HeatCapabilityProvider implements ICapabilityProvider {
     @Getter
     @Setter
     public static class HeatContainerWrapper implements IHeatContainer {
-        private double currentEnergy = 0;
 
+
+        /**
+         * @return The current amount of Thermal Energy
+         */
         @Override
-        public double acceptHeatFromNetwork(Direction side, double thermalEnergy) {
+        public long getCurrentThermalEnergy() {
             return 0;
         }
 
+        /**
+         * @return The minimum amount of Thermal Energy the HeatContainer can have before it is clamped (unless it can Underload)
+         */
+        @Override
+        public long getMinimumThermalEnergy() {
+            return 0;
+        }
+
+        /**
+         * @return The maximum amount of Thermal Energy the HeatContainer can have before it is clamped (unless it can Overload)
+         */
+        @Override
+        public long getMaximumThermalEnergy() {
+            return 0;
+        }
+
+        /**
+         * Check {@link #getHeatCanBeUnderloaded()} for whether this HeatContainer can underload
+         *
+         * @return The threshold at which an Underload will occur
+         */
+        @Override
+        public long getUnderloadThreshold() {
+            return 0;
+        }
+
+        /**
+         * Check {@link #getHeatCanBeOverloaded()} for whether this HeatContainer can overload
+         *
+         * @return The threshold at which an Overload will occur
+         */
+        @Override
+        public long getOverloadThreshold() {
+            return 0;
+        }
+
+        @Override
+        public void setCurrentThermalEnergy(long thermalEnergy) {
+
+        }
+
+        @Override
+        public float getConductanceRate() {
+            return 0;
+        }
+
+        @Override
+        public float getConductanceRateEnvironment() {
+            return 0;
+        }
+
+        @Override
+        public long getBaseTemperature() {
+            return 0;
+        }
+
+        @Override
+        public long getLastThermalChange() {
+            return 0;
+        }
+
+        /**
+         * @param side The direction we want to check if heat can input from
+         * @return if this container can accept heat from this side
+         */
         @Override
         public boolean inputsHeat(Direction side) {
             return false;
-        }
-
-        @Override
-        public double changeHeat(double thermalEnergy) {
-            currentEnergy += thermalEnergy;
-            double fit = getHeatChangeToFitWithinTempLimits();
-            currentEnergy -= fit;
-            return thermalEnergy - fit;
-        }
-
-        @Override
-        public float getOverloadLimit() {
-            return Float.MAX_VALUE;
-        }
-
-        @Override
-        public float getHeatCapacity() {
-            return 1000f;
-        }
-
-        @Override
-        public float getConductance() {
-            return 0;
         }
     }
 }

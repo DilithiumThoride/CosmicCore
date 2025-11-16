@@ -57,45 +57,46 @@ public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHea
                 .translatable("gui.cosmiccore.thermia_hatch.label." + (this.io == IO.IN ? "import" : "export"))));
         group.addWidget(new LabelWidget(8, 18, () -> I18n.get("gui.cosmiccore.thermia_hatch.hatch_limit")));
         group.addWidget(new LabelWidget(8, 28,
-                () -> I18n.get(FormattingUtil.formatNumbers(thermiaContainer.getOverloadLimit()), "K"))
+                () -> I18n.get(FormattingUtil.formatNumbers(thermiaContainer.getOverloadThreshold()), "K"))
                 .setClientSideWidget());
         group.addWidget(new LabelWidget(8, 38, () -> I18n.get("gui.cosmiccore.thermia_hatch.stored_temp"))
                 .setClientSideWidget());
         group.addWidget(new LabelWidget(8, 48,
-                () -> I18n.get(FormattingUtil.formatNumbers(thermiaContainer.getCurrentTemp()), "K"))
+                () -> I18n.get(FormattingUtil.formatNumbers(thermiaContainer.getCurrentThermalEnergy()), "K"))
                 .setClientSideWidget());
         group.setBackground(GuiTextures.BACKGROUND_INVERSE);
         return group;
     }
 
-    public static int getThermiaLimits(int tier) {
+    //TODO: Review these numbers. I don't know what measurement these were in. The current implementation is millikelvin
+    public static HeatInfo getThermiaLimits(int tier) {
         return switch (tier) {
-            case GTValues.ZPM -> 95000;
-            case GTValues.UV -> 128000;
-            case GTValues.UHV -> 108000;
-            case GTValues.UEV -> 158000;
-            case GTValues.UIV -> 198400;
-            case GTValues.UXV -> 360000;
-            case GTValues.OpV -> 2500000;
-            case GTValues.MAX -> Integer.MAX_VALUE;
-            default -> 0;
+            case GTValues.ZPM -> HeatInfo.of(0, 95000);
+            case GTValues.UV -> HeatInfo.of(0, 128000);
+            case GTValues.UHV -> HeatInfo.of(0, 108000);
+            case GTValues.UEV -> HeatInfo.of(0, 158000);
+            case GTValues.UIV -> HeatInfo.of(0, 198400);
+            case GTValues.UXV -> HeatInfo.of(0, 360000);
+            case GTValues.OpV -> HeatInfo.of(0, 2500000);
+            case GTValues.MAX -> HeatInfo.of(0, Long.MAX_VALUE); // H O T
+            default -> HeatInfo.of(273000, 273000);
         };
     }
 
     @Override
     public void saveCustomPersistedData(CompoundTag tag, boolean forDrop) {
-        tag.putDouble("Thermal", thermiaContainer.getCurrentEnergy());
+        tag.putLong("Thermal", thermiaContainer.getCurrentThermalEnergy());
         super.saveCustomPersistedData(tag, forDrop);
     }
 
     @Override
     public void loadCustomPersistedData(CompoundTag tag) {
-        thermiaContainer.setCurrentEnergy(tag.getDouble("Thermal"));
+        thermiaContainer.setCurrentThermalEnergy(tag.getLong("Thermal"));
         super.loadCustomPersistedData(tag);
     }
 
     @Override
-    public double acceptHeatFromNetwork(Direction side, double thermalEnergy) {
+    public long acceptHeatFromNetwork(Direction side, long thermalEnergy) {
         return thermiaContainer.acceptHeatFromNetwork(side, thermalEnergy);
     }
 
@@ -110,43 +111,56 @@ public class ThermiaHatchPartMachine extends TieredIOPartMachine implements IHea
     }
 
     @Override
-    public double changeHeat(double thermalEnergy) {
+    public long changeHeat(long thermalEnergy) {
         return thermiaContainer.changeHeat(thermalEnergy);
     }
 
     @Override
-    public float getOverloadLimit() {
-        return thermiaContainer.getOverloadLimit();
+    public long getOverloadThreshold() {
+        return thermiaContainer.getOverloadThreshold();
     }
 
     @Override
-    public double getCurrentEnergy() {
-        return thermiaContainer.getCurrentEnergy();
+    public long getUnderloadThreshold() {
+        return thermiaContainer.getUnderloadThreshold();
     }
 
     @Override
-    public void setCurrentEnergy(double energy) {
-        thermiaContainer.setCurrentEnergy(energy);
+    public long getLastThermalChange() {
+        return thermiaContainer.getLastThermalChange();
     }
 
     @Override
-    public float getHeatCapacity() {
-        return thermiaContainer.getHeatCapacity();
+    public long getCurrentThermalEnergy() {
+        return thermiaContainer.getCurrentThermalEnergy();
     }
 
     @Override
-    public double getCurrentTemperature() {
-        return thermiaContainer.getCurrentTemperature();
+    public void setCurrentThermalEnergy(long energy) {
+        thermiaContainer.setCurrentThermalEnergy(energy);
     }
 
     @Override
-    public double getBaseTemperature() {
+    public long getMaximumThermalEnergy() {
+        return thermiaContainer.getMaximumThermalEnergy();
+    }
+
+    @Override
+    public long getMinimumThermalEnergy() {
+        return thermiaContainer.getMinimumThermalEnergy();
+    }
+
+    @Override
+    public long getBaseTemperature() {
         return thermiaContainer.getBaseTemperature();
     }
 
     @Override
-    public float getConductance() {
-        return thermiaContainer.getConductance();
+    public float getConductanceRate() {
+        return thermiaContainer.getConductanceRate();
+    }
+    public float getConductanceRateEnvironment() {
+        return thermiaContainer.getConductanceRateEnvironment();
     }
 
     @Override

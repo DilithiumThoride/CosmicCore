@@ -11,7 +11,6 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.Direction;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -19,34 +18,39 @@ import java.util.function.Predicate;
 public class NotifiableThermiaContainer extends NotifiableRecipeHandlerTrait<Integer> implements IHeatContainer {
     @Getter
     private final IO handlerIO;
-    @Getter
-    private final float overloadLimit;
     @Persisted
     @DescSynced
     @Getter
-    private double energy;
+    private long energy;
+    private long lastEnergy;
     @Setter
     private Predicate<Direction> sideInputCondition;
     @Setter
     private Predicate<Direction> sideOutputCondition;
-    public NotifiableThermiaContainer(MetaMachine machine, IO io, long overloadLimit, long currentTemp) {
+
+    @Getter
+    private final long minimumThermalEnergy;
+    @Getter
+    private final long maximumThermalEnergy;
+    @Getter
+    private final long underloadThreshold;
+    @Getter
+    private final long overloadThreshold;
+    private final float conductanceRate;
+
+    public NotifiableThermiaContainer(MetaMachine machine, IO io, HeatInfo heatInfo, float conductanceRate) {
         super(machine);
         this.handlerIO = io;
-        this.overloadLimit = overloadLimit;
-        this.energy = thermalEnergy;
+        this.energy = heatInfo.current();
+        this.minimumThermalEnergy = heatInfo.minimum();
+        this.maximumThermalEnergy = heatInfo.maximum();
+        this.underloadThreshold = heatInfo.underload();
+        this.overloadThreshold = heatInfo.overload();
+        this.conductanceRate = conductanceRate;
     }
 
     public void serverTick() {
         if (getMachine().getLevel().isClientSide) return;
-    }
-
-    @Override
-    public double acceptHeatFromNetwork(Direction side, double thermalEnergy) {
-        this.energy += thermalEnergy;
-        double fit = getHeatChangeToFitWithinTempLimits();
-        this.energy += fit;
-        thermalEnergy -= fit;
-        return thermalEnergy;
     }
 
     @Override
@@ -60,32 +64,33 @@ public class NotifiableThermiaContainer extends NotifiableRecipeHandlerTrait<Int
     }
 
     @Override
-    public double changeHeat(double thermalEnergy) {
-        this.energy += thermalEnergy;
-        double fit = getHeatChangeToFitWithinTempLimits();
-        this.energy += fit;
-        thermalEnergy -= fit;
-        return thermalEnergy;
-    }
-
-    @Override
-    public double getCurrentEnergy() {
+    public long getCurrentThermalEnergy() {
         return energy;
     }
 
     @Override
-    public void setCurrentEnergy(double energy) {
+    public void setCurrentThermalEnergy(long energy) {
         this.energy = energy;
     }
 
     @Override
-    public float getHeatCapacity() {
-        return 500f;
+    public float getConductanceRate() {
+        return conductanceRate;
     }
 
     @Override
-    public float getConductance() {
-        return 1f;
+    public float getConductanceRateEnvironment() {
+        return 500; //TODO: read dimension map for environmental temperature stuff
+    }
+
+    @Override
+    public long getBaseTemperature() {
+        return 300000; //300K TODO: read dimension map for environmental temperature stuff
+    }
+
+    @Override
+    public long getLastThermalChange() {
+        return energy - lastEnergy;
     }
 
     @Override
@@ -107,13 +112,5 @@ public class NotifiableThermiaContainer extends NotifiableRecipeHandlerTrait<Int
     @Override
     public RecipeCapability<Integer> getCapability() {
         return null;
-    }
-
-    public void setSideInputCondition(final Predicate<Direction> sideInputCondition) {
-        this.sideInputCondition = sideInputCondition;
-    }
-
-    public void setSideOutputCondition(final Predicate<Direction> sideOutputCondition) {
-        this.sideOutputCondition = sideOutputCondition;
     }
 }

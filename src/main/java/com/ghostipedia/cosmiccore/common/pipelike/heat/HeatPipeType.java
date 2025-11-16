@@ -1,7 +1,7 @@
 package com.ghostipedia.cosmiccore.common.pipelike.heat;
 
 import com.ghostipedia.cosmiccore.CosmicCore;
-import com.ghostipedia.cosmiccore.api.data.CosmicCustomTags;
+import com.ghostipedia.cosmiccore.api.data.CosmicTagPrefix;
 import com.ghostipedia.cosmiccore.api.pipe.HeatPipeProperties;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
@@ -15,7 +15,7 @@ import net.minecraft.util.StringRepresentable;
 import java.util.Locale;
 
 public enum HeatPipeType implements IMaterialPipeType<HeatPipeProperties>, StringRepresentable {
-    NORMAL(CosmicCustomTags.heatNormal);
+    NORMAL(CosmicTagPrefix.heatNormal);
 
     public static final ResourceLocation TYPE = CosmicCore.id("heat");
     private final TagPrefix prefix;

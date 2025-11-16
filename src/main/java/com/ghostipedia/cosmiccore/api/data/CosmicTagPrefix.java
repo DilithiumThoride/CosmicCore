@@ -1,12 +1,15 @@
 package com.ghostipedia.cosmiccore.api.data;
 
+import com.ghostipedia.cosmiccore.common.data.CosmicBlockEntities;
 import com.ghostipedia.cosmiccore.common.data.tag.TagUtil;
 
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlags;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 
+import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -29,6 +32,7 @@ public class CosmicTagPrefix {
     public static TagPrefix alveFoilInsulator;
     public static TagPrefix shapeMemoryFoil;
     public static TagPrefix rawOreCubic;
+    public static TagPrefix heatNormal;
     public static final TagKey<Block> STAR_LADDER_BLOCKS = TagUtil.createBlockTag("starladder_blocks");
     public static final TagKey<Item> STAR_LADDER_ITEMS = TagUtil.createItemTag("starladder_items");
 
@@ -136,5 +140,11 @@ public class CosmicTagPrefix {
                 .generateItem(true)
                 .maxStackSize(64)
                 .generationCondition(hasPlateProp.and(hasBoltProp));
+
+        heatNormal = new TagPrefix("heatNormal")
+                .itemTable(() -> CosmicBlockEntities.HEAT_PIPE_BLOCKS).langValue("Normal %s Heat Pipe")
+                .miningToolTag(GTToolType.WRENCH.harvestTags.get(0)).materialAmount(GTValues.M * 2)
+                .unificationEnabled(true);
+
     }
 }
