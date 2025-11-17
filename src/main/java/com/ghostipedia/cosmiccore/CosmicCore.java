@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Mod(CosmicCore.MOD_ID)
+@Mod.EventBusSubscriber
 public class CosmicCore {
 
     public static final String MOD_ID = "cosmiccore", NAME = "CosmicCore";
@@ -149,10 +150,10 @@ public class CosmicCore {
         CosmicCapabilities.register(event);
     }
 
-    @SubscribeEvent
-    public void attachCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
-        if(event.getObject() instanceof MetaMachineBlockEntity mmbe) {
-            event.addCapability(CosmicCore.id("heat_capability"), new HeatCapabilityProvider(mmbe));
-        }
-    }
+//    @SubscribeEvent
+//    public void attachCapabilities(AttachCapabilitiesEvent<BlockEntity> event) {
+//        if(event.getObject() instanceof MetaMachineBlockEntity mmbe) {
+//            event.addCapability(CosmicCore.id("heat_capability"), new HeatCapabilityProvider(mmbe));
+//        }
+//    }
 }

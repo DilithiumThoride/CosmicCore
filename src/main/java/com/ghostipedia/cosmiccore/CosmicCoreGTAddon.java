@@ -4,6 +4,9 @@ import com.ghostipedia.cosmiccore.api.capability.recipe.CosmicRecipeCapabilities
 import com.ghostipedia.cosmiccore.api.data.CosmicCoreMaterialIconType;
 import com.ghostipedia.cosmiccore.api.data.CosmicTagPrefix;
 import com.ghostipedia.cosmiccore.api.registries.CosmicRegistration;
+import com.ghostipedia.cosmiccore.common.data.CosmicBlockEntities;
+import com.ghostipedia.cosmiccore.common.data.CosmicHeatPipe;
+import com.ghostipedia.cosmiccore.common.data.CosmicMaterialBlocks;
 import com.ghostipedia.cosmiccore.common.data.materials.CosmicElements;
 import com.ghostipedia.cosmiccore.common.data.recipe.CosmicCoreOreRecipeHandler;
 import com.ghostipedia.cosmiccore.common.data.recipe.CosmicMaterialRecipeHandlers;
@@ -44,7 +47,8 @@ public class CosmicCoreGTAddon implements IGTAddon {
     @Override
     public void initializeAddon() {
         CosmicCore.LOGGER.info("CosmicCoreGTAddon has loaded!");
-        //CosmicBlockEntities.generateHeatPipeBlocks();
+        CosmicMaterialBlocks.generateHeatPipeBlocks();
+        CosmicHeatPipe.init();
     }
 
     @Override

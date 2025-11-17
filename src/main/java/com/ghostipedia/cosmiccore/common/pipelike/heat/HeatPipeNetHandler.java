@@ -104,6 +104,7 @@ public class HeatPipeNetHandler implements IHeatContainer {
         }
         lastUpdateTick = tick;
         lastThermalEnergy = currentThermalEnergy;
-        currentThermalEnergy = pipe.loseEnergy(currentThermalEnergy, pipe.getEnvironmentalConductivity() * properties.getConductanceEnvironment(), update);
+        currentThermalEnergy = pipe.iterateThermalEnergyTowardsEnvironment(currentThermalEnergy, update);
+        //currentThermalEnergy = pipe.loseEnergy(currentThermalEnergy, pipe.getEnvironmentalConductivity() * properties.getConductanceEnvironment(), update);
     }
 }

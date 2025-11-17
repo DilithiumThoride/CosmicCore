@@ -23,6 +23,14 @@ public class HeatPipeProperties implements IMaterialProperty {
 
     private final int hash;
 
+    /**
+     * @param minCapacity
+     * @param maxCapacity
+     * @param conductanceRate The rate at which the thermalCapacity is linearly interpolated to its neighbours and the environment.
+     *                        <br><br>A value of 1.0 would cause the source temperature to instantly match the target temperature.
+     * @param underloadThreshold
+     * @param overloadThreshold
+     */
     public HeatPipeProperties(long minCapacity, long maxCapacity, float conductanceRate,
                               long underloadThreshold, long overloadThreshold) {
         assert conductanceRate > 0;

@@ -1,6 +1,7 @@
 package com.ghostipedia.cosmiccore.api.data;
 
 import com.ghostipedia.cosmiccore.common.data.CosmicBlockEntities;
+import com.ghostipedia.cosmiccore.common.data.CosmicMaterialBlocks;
 import com.ghostipedia.cosmiccore.common.data.tag.TagUtil;
 
 import com.gregtechceu.gtceu.api.GTValues;
@@ -142,7 +143,7 @@ public class CosmicTagPrefix {
                 .generationCondition(hasPlateProp.and(hasBoltProp));
 
         heatNormal = new TagPrefix("heatNormal")
-                .itemTable(() -> CosmicBlockEntities.HEAT_PIPE_BLOCKS).langValue("Normal %s Heat Pipe")
+                .itemTable(() -> CosmicMaterialBlocks.HEAT_PIPE_BLOCKS).langValue("Normal %s Heat Pipe")
                 .miningToolTag(GTToolType.WRENCH.harvestTags.get(0)).materialAmount(GTValues.M * 2)
                 .unificationEnabled(true);
 

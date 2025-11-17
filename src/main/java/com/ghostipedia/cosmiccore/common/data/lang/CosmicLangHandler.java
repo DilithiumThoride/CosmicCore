@@ -14,6 +14,7 @@ public class CosmicLangHandler extends LangHandler {
         // thermia
         replace(provider,"cosmiccore.recipe.temperature", "Temperature:");
         replace(provider,"tooltip.cosmiccore.thermia_hatch_limit", "§cTemp. Limit: %sK");
+        provider.add("tagprefix.heat_normal", "%s Thermia Pipe");
 
         // machine tooltips/names/etc
         provider.add("gtceu.naquahine_reactor", "§bNaquahine Reactor");
@@ -117,7 +118,6 @@ public class CosmicLangHandler extends LangHandler {
         provider.add("tooltip.cosmiccore.soul_hatch.output", "§cMax Soul Network Capacity§f:§6 %s");
         provider.add("tooltip.cosmiccore.ember_hatch.consumption", "§cMax Ember Consumption§f:§6 %s");
         provider.add("tooltip.cosmiccore.ember_hatch.capacity", "§cMax Ember capacity§f:§6 %s");
-        provider.add("tooltip.cosmiccore.thermia_hatch_limit", "§cTemp. Limit: %sK");
         provider.add("cosmiccore.multiblock.magnetic_field_strength", "§fMax Field Strength§f:§6 %s");
         provider.add("cosmiccore.multiblock.magnetic_regen", "§aField Recovery Rate§f:§6 %sT/t");
         provider.add("gtceu.titan_fusion", "Titan Fusion Reactor"); // recipe type lang

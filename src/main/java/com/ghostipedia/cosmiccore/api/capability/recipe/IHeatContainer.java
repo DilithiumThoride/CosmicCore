@@ -37,16 +37,16 @@ public interface IHeatContainer extends IHeatInfoProvider {
     long getOverloadThreshold();
 
     void setCurrentThermalEnergy(long thermalEnergy);
-//    void setMinimumThermalEnergy(long thermalEnergy);
-//    void setMaximumThermalEnergy(long thermalEnergy);
-//    void setUnderloadThermalEnergy(long thermalEnergy);
-//    void setOverloadThermalEnergy(long thermalEnergy);
 
+    /**
+     * @return The rate at which this HeatContainer will adjust heat based on its neighbour(s) during linear interpolation
+     */
     float getConductanceRate();
-    float getConductanceRateEnvironment();
 
-//    long setConductanceRate();
-//    long setConductanceRateEnvironment();
+    /**
+     * @return The rate at which this HeatContainer will adjust heat to match its environment during linear interpolation
+     */
+    float getConductanceRateEnvironment();
 
     long getBaseTemperature();
 
@@ -204,28 +204,14 @@ public interface IHeatContainer extends IHeatInfoProvider {
      * @return Max amount of heat that can be output per tick
      */
     default long getEjectLimit() {
-        return 0L;
+        return getMaximumThermalEnergy() / 10;
     };
 
     /**
      * @return Max amount of heat that can be accepted per tick
      */
     default long getAcceptLimit() {
-        return 0L;
-    }
-
-    /**
-     * @return Input per second
-     */
-    default long getHeatInputPerSec() {
-        return 0L;
-    }
-
-    /**
-     * @return Output per second
-     */
-    default long getHeatOutputPerSec() {
-        return 0L;
+        return getMaximumThermalEnergy() / 10;
     }
 
     // I'm not sure what the purpose of this was supposed to be

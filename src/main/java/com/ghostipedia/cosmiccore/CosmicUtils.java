@@ -60,4 +60,35 @@ public class CosmicUtils {
         }
         return false;
     }
+
+    //100, 200, 0.5
+    //100 * (1 - 0.5) + (200 * 0.5) = 100 * (0.5) + (100) = 50 + 100 = 150
+    //100, 1000, 0.33
+    // = 100 * (1 - 0.33) + (1000 * 0.33)
+    // = 100 * (0.67) + (333)
+    // = 67 + 333 = 400
+
+    /**
+     * Performs linear interpolation of {@code x} to {@code y} by an amount of {@code rate}
+     * @param x Original number
+     * @param y Target number
+     * @param rate Rate at which to move to the new number
+     * @return Linearly interpolated result
+     */
+    public static float Lerp(float x, float y, float rate)
+    {
+        return x * (1.0f - rate) + (y * rate);
+    }
+
+    /**
+     * Performs linear interpolation of {@code x} to {@code y} by an amount of {@code rate}
+     * @param x Original number
+     * @param y Target number
+     * @param rate Rate at which to move to the new number
+     * @return Linearly interpolated result
+     */
+    public static double DoubleLerp(double x, double y, float rate)
+    {
+        return x * (1.0d - rate) + (y * rate);
+    }
 }

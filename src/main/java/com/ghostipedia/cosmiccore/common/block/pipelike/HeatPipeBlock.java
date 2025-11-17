@@ -4,6 +4,7 @@ import com.ghostipedia.cosmiccore.api.material.CosmicPropertyKeys;
 import com.ghostipedia.cosmiccore.api.pipe.HeatPipeProperties;
 import com.ghostipedia.cosmiccore.common.blockentity.pipelike.HeatPipeBlockEntity;
 import com.ghostipedia.cosmiccore.common.data.CosmicBlockEntities;
+import com.ghostipedia.cosmiccore.common.data.CosmicHeatPipe;
 import com.ghostipedia.cosmiccore.common.pipelike.heat.HeatPipeType;
 import com.ghostipedia.cosmiccore.common.pipelike.heat.LevelHeatPipeNet;
 import com.gregtechceu.gtceu.api.block.MaterialPipeBlock;
@@ -68,7 +69,7 @@ public class HeatPipeBlock extends MaterialPipeBlock<HeatPipeType, HeatPipePrope
 
     @Override
     public BlockEntityType<? extends PipeBlockEntity<HeatPipeType, HeatPipeProperties>> getBlockEntityType() {
-        return CosmicBlockEntities.HEAT_PIPE.get();
+        return CosmicHeatPipe.HEAT_PIPE.get();
     }
 
     @Override

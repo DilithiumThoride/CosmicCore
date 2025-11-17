@@ -1,5 +1,6 @@
 package com.ghostipedia.cosmiccore.common.blockentity.pipelike;
 
+import com.ghostipedia.cosmiccore.CosmicUtils;
 import com.ghostipedia.cosmiccore.api.capability.CosmicCapabilities;
 import com.ghostipedia.cosmiccore.api.capability.recipe.IHeatContainer;
 import com.ghostipedia.cosmiccore.api.pipe.HeatPipeProperties;
@@ -8,7 +9,6 @@ import com.ghostipedia.cosmiccore.common.pipelike.heat.HeatPipeNetHandler;
 import com.ghostipedia.cosmiccore.common.pipelike.heat.HeatPipeType;
 import com.ghostipedia.cosmiccore.common.pipelike.heat.LevelHeatPipeNet;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
-import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.IDataInfoProvider;
 import com.gregtechceu.gtceu.common.item.PortableScannerBehavior;
@@ -46,6 +46,8 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
     public HeatPipeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
+
+    public static void onBlockEntityRegister(BlockEntityType<HeatPipeBlockEntity> heatPipeBlockEntityBlockEntityType) {}
 
     @Override
     public void onLoad() {
@@ -122,14 +124,14 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
         return (23 + 273) * 1000; //Celsius to millikelvin (THIS IS FOR REFERENCE, PERFORM ACTUAL MAPS)
     }
 
-    //todo; make map of temps and dims
-    public float getEnvironmentalConductivity() {
-        return 0.5f;
-    }
-
-    public long loseEnergy(long thermalEnergy, float environmentalFactor, int ticksPassed) {
+    public long iterateThermalEnergyTowardsEnvironment(long thermalEnergy, int ticksPassed) {
+        var envRate = heatContainer.getConductanceRateEnvironment();
+        var envTemp = getEnvironmentalTemperature();
         for (int i = 0; i < ticksPassed; i++) {
-            thermalEnergy -= (long)(Math.pow(Math.abs(thermalEnergy), 0.3) * environmentalFactor * Math.signum(thermalEnergy));
+            //thermalEnergy -= (long)(Math.pow(Math.abs(thermalEnergy), 0.3) * environmentalFactor * Math.signum(thermalEnergy));
+
+            thermalEnergy = (long) CosmicUtils.DoubleLerp(thermalEnergy, envTemp, envRate);
+
         }
         return thermalEnergy;
     }
@@ -139,11 +141,11 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
     }
 
     public void update() {
-        if (getLevel().isClientSide) return;
+        if (level.isClientSide) return;
         for (Direction direction : Direction.values()) {
             if (isConnected(direction)) {
                 if (!neighbors.containsKey(direction)) {
-                    BlockEntity neighbor = getLevel().getBlockEntity(getBlockPos().relative(direction));
+                    BlockEntity neighbor = level.getBlockEntity(getBlockPos().relative(direction));
                     if (neighbor == null) {
                         neighbors.put(direction, null);
                         continue;
@@ -160,7 +162,8 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
                 long selfTemp = getHeatContainer().getCurrentThermalEnergy();
                 long neighborTemp = neighbor.getCurrentThermalEnergy();
                 if (neighborTemp >= selfTemp) continue;
-                long transfer = (long)((selfTemp - neighborTemp) * harmonicMean(neighbor.getConductanceRate(), getHeatContainer().getConductanceRate()));
+                //long transfer = (long)((selfTemp - neighborTemp) * harmonicMean(neighbor.getConductanceRate(), getHeatContainer().getConductanceRate()));
+                long transfer = (long)CosmicUtils.DoubleLerp(selfTemp, neighborTemp, (getHeatContainer().getConductanceRate() + neighbor.getConductanceRate()) / 2f);
                 transfer = neighbor.acceptHeatFromNetwork(direction, transfer);
                 getHeatContainer().changeHeat(-transfer);
             }
@@ -168,13 +171,14 @@ public class HeatPipeBlockEntity extends PipeBlockEntity<HeatPipeType, HeatPipeP
         double current = getHeatContainer().getCurrentThermalEnergy();
         double max = getHeatContainer().getOverloadThreshold();
         if (current > max) {
-            onOverload(current, max);
+            checkOverload(current, max);
         }
     }
 
-    protected void onOverload(double currentTemp, double tempLimit) {
+    protected void checkOverload(double currentTemp, double tempLimit) {
         if (currentTemp * 1.2 > tempLimit) {
-            getLevel().setBlock(getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+            //level.setBlock(getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+            this.heatContainer.overload();
         }
     }
 
